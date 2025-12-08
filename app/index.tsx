@@ -1,37 +1,39 @@
+import { useEffect } from "react";
 import { View, FlatList, ActivityIndicator, Button } from "react-native";
 import { router } from "expo-router";
 import NoteItem from "../components/NoteItem";
-import useNotes from "../hooks/useNotes";
-import { Note } from "../types/Note";
 import useNotesStore from "../hooks/useNotes";
-import { useEffect } from 'react';
 
 export default function NotesListScreen() {
-	const { notes, loading, loadNotes } = useNotesStore();
+  const { notes, loading, loadNotes } = useNotesStore();
 
-	useEffect(() => {
-      loadNotes();
-    }, []);
+  useEffect(() => {
+    loadNotes();
+  }, []);
 
-	return (
-		<View style={{ flex: 1 }}>
-			<Button
-				title="Add Note"
-				onPress={() => router.push("/edit")}
-			/>
+  return (
+    <View style={{ flex: 1, padding: 12 }}>
+      <Button title="Add Note" onPress={() => router.push("/edit")} />
 
-			{loading && <ActivityIndicator size="large" />}
+      {loading && <ActivityIndicator size="large" style={{ marginVertical: 20 }} />}
 
-			<FlatList
-				data={notes}
-				keyExtractor={(item: Note) => item.id.toString()}
-				renderItem={({ item }) => (
-					<NoteItem
-						item={item}
-						onPress={() => router.push({ pathname: "/details", params: { note: JSON.stringify(item) } })}
-					/>
-				)}
-			/>
-		</View>
-	);
+      <FlatList
+        data={notes}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <NoteItem
+            item={item}
+            onPress={() =>
+              router.push({
+                pathname: "/details",
+                params: { noteId: item.id },
+              })
+            }
+          />
+        )}
+      />
+
+      <Button title="Settings" onPress={() => router.push("/settings")} />
+    </View>
+  );
 }
