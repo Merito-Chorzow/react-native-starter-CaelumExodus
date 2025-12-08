@@ -1,39 +1,43 @@
-import { useEffect, useState } from "react";
-import { fetchNotes } from "@/api/notesApi";
-import { Note } from "@/types/Note";
+import { create } from "zustand";
+import { Note } from "../types/Note";
+import { fetchNotes } from "../api/notesApi";
 
-export default function useNotes() {
-	const [notes, setNotes] = useState<Note[]>([]);
-	const [loading, setLoading] = useState(true);
+type NotesStore = {
+  notes: Note[];
+  loading: boolean;
+  loadNotes: () => Promise<void>;
+  addNote: (note: Partial<Note>) => void;
+};
 
-	useEffect(() => {
-		load();
-	}, []);
+const useNotesStore = create<NotesStore>((set, get) => ({
+  notes: [],
+  loading: false,
 
-	async function load() {
-		setLoading(true);
-		const data = await fetchNotes();
+  loadNotes: async () => {
+    set({ loading: true });
 
-		const mapped = data.map((n: any) => ({
-			id: n.id,
-			title: n.title,
-			body: n.body,
-			image: null,
-		}));
+    const apiNotes = await fetchNotes();
 
-		setNotes(mapped);
-		setLoading(false);
-	}
+    const mapped = apiNotes.map((n: any) => ({
+      id: n.id,
+      title: n.title,
+      body: n.body,
+      image: null,
+    }));
 
-	function addNote(newNote: Partial<Note>) {
-		const note: Note = {
-			id: Date.now(),
-			title: newNote.title ?? "New Note",
-			body: newNote.body ?? "",
-			image: newNote.image ?? null,
-		};
-		setNotes((prev) => [note, ...prev]);
-	}
+    set({ notes: mapped, loading: false });
+  },
 
-	return { notes, loading, addNote };
-}
+  addNote: (newNote) => {
+    const fullNote: Note = {
+      id: Date.now(),
+      title: newNote.title ?? "Untitled",
+      body: newNote.body ?? "",
+      image: newNote.image ?? null,
+    };
+
+    set({ notes: [fullNote, ...get().notes] });
+  },
+}));
+
+export default useNotesStore;

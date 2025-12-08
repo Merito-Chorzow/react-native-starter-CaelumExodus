@@ -3,9 +3,15 @@ import { router } from "expo-router";
 import NoteItem from "../components/NoteItem";
 import useNotes from "../hooks/useNotes";
 import { Note } from "../types/Note";
+import useNotesStore from "../hooks/useNotes";
+import { useEffect } from 'react';
 
 export default function NotesListScreen() {
-	const { notes, loading } = useNotes();
+	const { notes, loading, loadNotes } = useNotesStore();
+
+	useEffect(() => {
+      loadNotes();
+    }, []);
 
 	return (
 		<View style={{ flex: 1 }}>

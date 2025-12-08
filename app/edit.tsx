@@ -3,6 +3,7 @@ import { View, TextInput, Button, Image, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import useNotes from "../hooks/useNotes";
 import { Note } from "@/types/Note";
+import useNotesStore from "../hooks/useNotes";
 import * as ImagePicker from "expo-image-picker";
 
 export default function EditScreen() {
@@ -11,7 +12,8 @@ export default function EditScreen() {
 		? JSON.parse(params.note as string)
 		: undefined;
 
-	const { addNote } = useNotes();
+
+    const addNote = useNotesStore(state => state.addNote);
 
 	const [title, setTitle] = useState(editing?.title ?? "");
 	const [body, setBody] = useState(editing?.body ?? "");

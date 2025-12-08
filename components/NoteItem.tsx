@@ -1,13 +1,7 @@
 import { TouchableOpacity, View, Text, Image } from "react-native";
 import { Note } from "@/types/Note";
 
-export default function NoteItem({
-									 item,
-									 onPress,
-								 }: {
-	item: Note;
-	onPress: () => void;
-}) {
+export default function NoteItem({item,onPress,}: {item: Note;onPress: () => void;}) {
 	return (
 		<TouchableOpacity
 			onPress={onPress}
