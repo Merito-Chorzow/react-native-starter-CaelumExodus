@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { View, ScrollView, StyleSheet, Alert, Image } from "react-native";
+import { View, ScrollView, StyleSheet, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { TextInput, Button, Card } from "react-native-paper";
 import useNotesStore from "../hooks/useNotes";
-import { Note } from "../types/Note";
+import { Note } from "@/types/Note";
 
 export default function EditScreen() {
   const params = useLocalSearchParams();

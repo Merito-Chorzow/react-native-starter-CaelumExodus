@@ -1,5 +1,5 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { View, ScrollView, StyleSheet, Image } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import { Text, Button, Card } from "react-native-paper";
 import useNotesStore from "../hooks/useNotes";
 
