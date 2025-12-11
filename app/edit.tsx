@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { View, TextInput, Button, Image, Alert } from "react-native";
+import { View, ScrollView, StyleSheet, Alert, Image } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
+import { TextInput, Button, Card } from "react-native-paper";
 import useNotesStore from "../hooks/useNotes";
 import { Note } from "../types/Note";
 
@@ -25,14 +26,30 @@ export default function EditScreen() {
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync({ allowsEditing: true });
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      quality: 0.8,
+    });
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  }
+
+  async function pickImage() {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 0.8,
+    });
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
   }
 
   function save() {
-    if (!title.trim()) return Alert.alert("Error", "Title is required");
+    if (!title.trim()) {
+      Alert.alert("Error", "Title is required");
+      return;
+    }
 
     if (editing) {
       updateNote(editing.id, { title, body, image });
@@ -44,32 +61,87 @@ export default function EditScreen() {
   }
 
   return (
-    <View style={{ padding: 20 }}>
-      <TextInput
-        value={title}
-        onChangeText={setTitle}
-        placeholder="Title"
-        style={{ fontSize: 20, marginBottom: 12 }}
-      />
-
-      <TextInput
-        value={body}
-        onChangeText={setBody}
-        placeholder="Description"
-        multiline
-        style={{ minHeight: 80, marginBottom: 12 }}
-      />
-
-      <Button title="Change thumbnail" onPress={takePhoto} />
-
-      {image && (
-        <Image
-          source={{ uri: image }}
-          style={{ width: "100%", height: 200, marginVertical: 12 }}
+    <ScrollView style={styles.container}>
+      <View style={styles.content}>
+        <TextInput
+          label="Title"
+          value={title}
+          onChangeText={setTitle}
+          mode="outlined"
+          style={styles.input}
         />
-      )}
 
-      <Button title="Save" onPress={save} />
-    </View>
+        <TextInput
+          label="Description"
+          value={body}
+          onChangeText={setBody}
+          mode="outlined"
+          multiline
+          numberOfLines={5}
+          style={styles.input}
+        />
+
+        {image && (
+          <Card style={styles.imageCard}>
+            <Card.Cover source={{ uri: image }} />
+          </Card>
+        )}
+
+        <View style={styles.buttonGroup}>
+          <Button
+            mode="outlined"
+            icon="camera"
+            onPress={takePhoto}
+            style={styles.imageButton}
+          >
+            Camera
+          </Button>
+          <Button
+            mode="outlined"
+            icon="image"
+            onPress={pickImage}
+            style={styles.imageButton}
+          >
+            Gallery
+          </Button>
+        </View>
+
+        <Button
+          mode="contained"
+          icon="content-save"
+          onPress={save}
+          style={styles.saveButton}
+        >
+          Save Note
+        </Button>
+      </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+  },
+  content: {
+    padding: 16,
+  },
+  input: {
+    marginBottom: 16,
+  },
+  imageCard: {
+    marginBottom: 16,
+  },
+  buttonGroup: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 16,
+  },
+  imageButton: {
+    flex: 1,
+  },
+  saveButton: {
+    paddingVertical: 6,
+  },
+});

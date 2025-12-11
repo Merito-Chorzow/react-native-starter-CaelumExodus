@@ -1,32 +1,52 @@
-import { TouchableOpacity, View, Text, Image } from "react-native";
+import { StyleSheet } from "react-native";
+import { Card, Text } from "react-native-paper";
 import { Note } from "@/types/Note";
 
-export default function NoteItem({item,onPress,}: {item: Note;onPress: () => void;}) {
-	return (
-		<TouchableOpacity
-			onPress={onPress}
-			style={{
-				flexDirection: "row",
-				padding: 12,
-				marginVertical: 6,
-				backgroundColor: "#eee",
-				borderRadius: 8,
-			}}
-		>
-			<Image
-				source={
-					item.image
-						? { uri: item.image }
-						: require("../assets/placeholder.png")
-				}
-				style={{ width: 60, height: 60, borderRadius: 6, marginRight: 12 }}
-			/>
-			<View style={{ flex: 1 }}>
-				<Text style={{ fontSize: 18, fontWeight: "600" }}>{item.title}</Text>
-				<Text numberOfLines={1} style={{ color: "#555" }}>
-					{item.body}
-				</Text>
-			</View>
-		</TouchableOpacity>
-	);
+export default function NoteItem({
+  item,
+  onPress,
+}: {
+  item: Note;
+  onPress: () => void;
+}) {
+  return (
+    <Card style={styles.card} onPress={onPress}>
+      <Card.Cover
+        source={
+          item.image
+            ? { uri: item.image }
+            : require("../assets/placeholder.png")
+        }
+        style={styles.cover}
+      />
+      <Card.Content style={styles.content}>
+        <Text variant="titleMedium" style={styles.title}>
+          {item.title}
+        </Text>
+        <Text variant="bodyMedium" numberOfLines={2} style={styles.body}>
+          {item.body || "No description"}
+        </Text>
+      </Card.Content>
+    </Card>
+  );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    marginBottom: 12,
+    elevation: 2,
+  },
+  cover: {
+    height: 160,
+  },
+  content: {
+    paddingTop: 12,
+  },
+  title: {
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  body: {
+    color: "#666",
+  },
+});
